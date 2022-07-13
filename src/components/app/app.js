@@ -1,89 +1,65 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 
 import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
 import EmployeesList from '../employees-list/employees-list';
 
-// todo: изменить названия папок
-
 import './app.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [
-        { date: '01.01.2022', name: 'Adel M.', quantity: '5000', distance: '200', id: 1,},
-        { date: '01.01.2022', name: 'Boris S.', quantity: '7000', distance: '200', id: 2,},
-        { date: '01.01.2022', name: 'Vladimir S.', quantity: '4000', distance: '200', id: 3,},
-        { date: '01.01.2022', name: 'Salavat I.', quantity: '1000', distance: '200', id: 4,},
-      ],
-      term: '',
-      filter: 'all',
-    }
-    this.maxId = 4;
-  }
+const App = () => {
+  const [data, setData] = useState([]);
+  const [term, setTerm] = useState('');
+  const [filter, setFilter] = useState('name');
+  const [condition, setCondition] = useState('include');
 
-  onToggleRise = (id) => {
-    this.setState(({ data }) => ({
-      data: data.map(item => {
-        if (item.id === id) {
-          return { ...item, rise: !item.rise };
-        }
-        return item;
-      })
-    }))
-  }
+  useEffect(() => {
+    setData([
+      { date: '01.01.2022', name: 'Adel M.', quantity: 5000, distance: 200, id: 1, },
+      { date: '01.01.2022', name: 'Boris S.', quantity: 7000, distance: 300, id: 2, },
+      { date: '01.01.2022', name: 'Vladimir S.', quantity: 4000, distance: 400, id: 3, },
+      { date: '01.01.2022', name: 'Salavat I.', quantity: 1000, distance: 500, id: 4, },
+    ]);
+  }, [])
 
-  searchEmp = (items, term) => {
+  const filterPost = (items, term, filter, condition) => {
     if (term.length === 0) {
       return items;
     }
 
-    return items.filter(item => {
-      return item.name.indexOf(term) > -1;
-    })
-  }
-
-  onUpdateSearch = (term) => {
-    this.setState({ term });
-  }
-
-  filterPost = (items, filter) => {
-    switch (filter) {
-      case 'rise':
-        return items.filter(item => item.rise);
-      case 'moreThen1000':
-        return items.filter(item => item.salary > 1000);
+    switch (condition) {
+      case 'more':
+        return items.filter(item => item[filter] > term);
+      case 'less':
+        return items.filter(item => item[filter] < term);
+      case 'equals':
+        return items.filter(item => item[filter] == term);
+      case 'include':
+        return items.filter(item => {
+          console.log(item[filter])
+          return item[filter].toString().indexOf(term) > -1;
+        })
       default:
         return items;
     }
   }
 
-  onFilterSelect = (filter) => {
-    this.setState({ filter });
-  }
+  const visibleData = filterPost(data, term, filter, condition);
+  return (
+    <div className="app">
 
-  render() {
-    const { data, term, filter } = this.state;
-    const visibleData = this.filterPost(this.searchEmp(data, term), filter);
-    return (
-      <div className="app">
-
-        <div className="search-panel">
-          <SearchPanel onUpdateSearch={this.onUpdateSearch} />
-          <AppFilter
-            filter={filter}
-            onFilterSelect={this.onFilterSelect}
-          />
-        </div>
-
-        <EmployeesList
-          data={visibleData}
+      <div className="search-panel">
+        <SearchPanel onUpdateSearch={setTerm} />
+        <AppFilter
+          onFilterSelect={setFilter}
+          onConditionSelect={setCondition}
         />
       </div>
-    );
-  }
+
+      <EmployeesList
+        data={visibleData}
+      />
+    </div>
+  );
 }
 
 export default App;

@@ -15,7 +15,7 @@ const EmployeesList = ({ data }) => {
   });
 
   return (
-    <table class="table">
+    <table className="table">
       <thead>
         <tr>
           <th scope="col">Date</th>

@@ -1,6 +1,7 @@
 import './app-filter.css';
 
 const AppFilter = (props) => {
+  const { onFilterSelect, onConditionSelect } = props;
 
   function myFunction(className) {
     document.getElementById(className).classList.toggle("show");
@@ -8,22 +9,21 @@ const AppFilter = (props) => {
 
   const buttons =
     <div className="buttons">
-      <div class="dropdown">
-        <button onClick={() => myFunction("column")} class="dropbtn">колонка</button>
-        <div id="column" class="dropdown-content">
-          <button>date</button>
-          <button>name</button>
-          <button>quantity</button>
-          <button>distance</button>
+      <div className="dropdown">
+        <button onClick={() => myFunction("column")} className="dropbtn">колонка</button>
+        <div id="column" className="dropdown-content">
+          <button onClick={() => onFilterSelect('name')}>name</button>
+          <button onClick={() => onFilterSelect('quantity')}>quantity</button>
+          <button onClick={() => onFilterSelect('distance')}>distance</button>
         </div>
       </div>
-      <div class="dropdown">
-        <button onClick={() => myFunction("condition")} class="dropbtn">условие</button>
-        <div id="condition" class="dropdown-content">
-          <button>равно</button>
-          <button>содержит</button>
-          <button>больше</button>
-          <button>меньше</button>
+      <div className="dropdown">
+        <button onClick={() => myFunction("condition")} className="dropbtn">условие</button>
+        <div id="condition" className="dropdown-content">
+          <button onClick={() => onConditionSelect('include')}>содержит</button>
+          <button onClick={() => onConditionSelect('equals')}>равно</button>
+          <button onClick={() => onConditionSelect('more')}>больше</button>
+          <button onClick={() => onConditionSelect('less')}>меньше</button>
         </div>
       </div>
     </div>
