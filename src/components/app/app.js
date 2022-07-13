@@ -50,6 +50,8 @@ const App = () => {
       <div className="search-panel">
         <SearchPanel onUpdateSearch={setTerm} />
         <AppFilter
+          filter={filter}
+          condition={condition}
           onFilterSelect={setFilter}
           onConditionSelect={setCondition}
         />
