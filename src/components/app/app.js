@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
@@ -11,15 +12,37 @@ const App = () => {
   const [term, setTerm] = useState('');
   const [filter, setFilter] = useState('name');
   const [condition, setCondition] = useState('include');
+  const [i, setI] = useState(0)
+  const [fetching, setFetching] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    setData([
-      { date: '01.01.2022', name: 'Adel M.', quantity: 5000, distance: 200, id: 1, },
-      { date: '01.01.2022', name: 'Boris S.', quantity: 7000, distance: 300, id: 2, },
-      { date: '01.01.2022', name: 'Vladimir S.', quantity: 4000, distance: 400, id: 3, },
-      { date: '01.01.2022', name: 'Salavat I.', quantity: 1000, distance: 500, id: 4, },
-    ]);
-  }, [])
+    if (fetching) {
+      console.log('fetching')
+      axios.get(`http://localhost:3004/posts?_start=${i}&_limit=20`)
+        .then(res => {
+          setData([...data, ...res.data]);
+          setI(i => i + 20);
+          setTotalCount(res.headers['x-total-count']);
+        })
+        .finally(() => setFetching(false));
+    }
+
+  }, [fetching])
+
+  useEffect(() => {
+    document.addEventListener('scroll', scrollHandler);
+    return function () {
+      document.removeEventListener('scroll', scrollHandler);
+    }
+  })
+
+  const scrollHandler = (e) => {
+    if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100
+    && data.length < totalCount) {
+      setFetching(true);
+    }
+  }
 
   const filterPost = (items, term, filter, condition) => {
     if (term.length === 0) {

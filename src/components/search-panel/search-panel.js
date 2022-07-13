@@ -7,7 +7,6 @@ const SearchPanel = (props) => {
 
   const onUpdateSearch = (e) => {
     const term = e.target.value;
-    console.log(e.target.value)
     setTerm(term);
     props.onUpdateSearch(term);
   }
